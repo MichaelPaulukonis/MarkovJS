@@ -68,7 +68,6 @@ Markov.prototype = (function () {
       nextState(c);
     }
     pushChain(NONWORD);
-    console.log(markovChain);
   };
 
   /**
@@ -124,7 +123,6 @@ Markov.prototype = (function () {
         i,
         r;
     for (i = 0; i < chainOrder; i++) {
-      console.log(state[i]);
       chain = chain[state[i]];
     }
     r = Math.floor(Math.random() * chain.length);

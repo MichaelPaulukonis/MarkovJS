@@ -1,8 +1,9 @@
 /**
- * コンストラクタ
+ * Markov Constructor
+ * Creates chain based on input str and order 
  *
- * @param  string str          マルコフ連鎖を適用する入力文字列
- * @param  number chain_length チェインの長さ
+ * @param  <String> str
+ * @param  number order  
  * @return void
  */
 var Markov = function (str, order) {
@@ -11,25 +12,25 @@ var Markov = function (str, order) {
 
 Markov.prototype = (function () {
   var NONWORD = "NONWORD",
-    state,
-    input,
-    markovChain,
-    chainOrder,
-    init,
-    makeChain,
-    pushChain,
-    each,
-    pick,
-    initState,
-    nextState,
-    getChain;
+      state,
+      input,
+      markovChain,
+      chainOrder,
+      init,
+      makeChain,
+      pushChain,
+      each,
+      pick,
+      initState,
+      nextState,
+      getChain;
 
   /**
-   * チェインの初期化
-   * 入力文字列、チェインの長さを設定し、チェインを作成する
+   * Initialization of Markov Chain
+   * Sets the order of chain states
    *
-   * @param  string str 入力文字列
-   * @param  number len チェインの長さ
+   * @param  <String> str
+   * @param  number order 
    * @return void
    */
   init = function (str, order) {
@@ -40,7 +41,7 @@ Markov.prototype = (function () {
   };
 
   /**
-   * チェインの作成
+   * Create the chain
    *
    * @param  void
    * @return void
@@ -49,9 +50,9 @@ Markov.prototype = (function () {
     initState();
     markovChain = {};
     var strList = input.split(''),
-      i,
-      c;
-    for (i = 0; i < strList.length; i += 1) {
+        i,
+        c;
+    for (i = 0; i < strList.length; i++) {
       c = strList[i];
       pushChain(c);
       nextState(c);
@@ -60,15 +61,15 @@ Markov.prototype = (function () {
   };
 
   /**
-   * チェイン 1 文字挿入する
+   * Insert a single token
    *
-   * @param  string c 挿入する文字
+   * @param  <String> tok
    * @return void
    */
-  pushChain = function (c) {
+  pushChain = function (tok) {
     var chain = markovChain,
-      i;
-    for (i = 0; i < (chainOrder - 1); i += 1) {
+        i;
+    for (i = 0; i < (chainOrder - 1); i++) {
       if (typeof chain[state[i]] === 'undefined') {
         chain[state[i]] = {};
       }
@@ -77,13 +78,14 @@ Markov.prototype = (function () {
     if (typeof chain[state[chainOrder - 1]] === 'undefined') {
       chain[state[chainOrder - 1]] = [];
     }
-    chain[state[chainOrder - 1]].push(c);
+    chain[state[chainOrder - 1]].push(tok);
   };
 
   /**
-   * マルコフ連鎖による出力を 1 文字ずつ lambda に渡す
+   * Markov Chain output
+   * Apply lambda to each tok returned 
    *
-   * @param  function lambda 文字を受ける関数
+   * @param  <Function> lambda
    * @return void
    */
   each = function (lambda) {
@@ -100,16 +102,16 @@ Markov.prototype = (function () {
   };
 
   /**
-   * マルコフ連鎖により 1 文字選ぶ
+   * Get single tok
    *
    * @param  void
-   * @return string マルコフ連鎖により抽出された文字
+   * @return string
    */
   pick = function () {
     var chain = markovChain,
-      i,
-      r;
-    for (i = 0; i < chainOrder; i += 1) {
+        i,
+        r;
+    for (i = 0; i < chainOrder; i++) {
       chain = chain[state[i]];
     }
     r = Math.floor(Math.random() * chain.length);
@@ -117,36 +119,36 @@ Markov.prototype = (function () {
   };
 
   /**
-   * 状態の初期化
+   * State initialization
    *
    * @param  void
    * @return void
    */
   initState = function () {
     state = [];
-    for (var i = 0; i < chainOrder; i += 1) {
+    for (var i = 0; i < chainOrder; i++) {
       state[i] = NONWORD;
     }
   };
 
   /**
-   * 状態を次に進める
+   * Update state with new token
    *
-   * @param  string c チェインに挿入した文字
+   * @param  <String> tok
    * @return void
    */
-  nextState = function(c) {
-    for (var i = 0; i < (chainOrder - 1); i += 1) {
+  nextState = function(tok) {
+    for (var i = 0; i < (chainOrder - 1); i++) {
       state[i] = state[i + 1];
     }
-    state[chainOrder - 1] = c;
+    state[chainOrder - 1] = tok;
   };
 
   /**
-   * チェインを取得するためのインターフェイス
+   * Get the generated chain
    *
    * @param  void
-   * @return object 生成したチェイン
+   * @return <Object>
    */
   getChain = function () {
     return markovChain;

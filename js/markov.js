@@ -48,11 +48,11 @@ Markov.prototype = (function () {
   makeChain = function () {
     initState();
     markovChain = {};
-    var strArr = input.split(''),
+    var strList = input.split(''),
       i,
       c;
-    for (i = 0; i < strArr.length; i += 1) {
-      c = strArr[i];
+    for (i = 0; i < strList.length; i += 1) {
+      c = strList[i];
       pushChain(c);
       nextState(c);
     }

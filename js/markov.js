@@ -68,17 +68,18 @@ Markov.prototype = (function () {
    */
   pushChain = function (tok) {
     var chain = markovChain,
+        lastPos = chainOrder - 1,
         i;
-    for (i = 0; i < (chainOrder - 1); i++) {
+    for (i = 0; i < lastPos; i++) {
       if (typeof chain[state[i]] === 'undefined') {
         chain[state[i]] = {};
       }
       chain = chain[state[i]];
     }
-    if (typeof chain[state[chainOrder - 1]] === 'undefined') {
-      chain[state[chainOrder - 1]] = [];
+    if (typeof chain[state[lastPos]] === 'undefined') {
+      chain[state[lastPos]] = [];
     }
-    chain[state[chainOrder - 1]].push(tok);
+    chain[state[lastPos]].push(tok);
   };
 
   /**
@@ -138,10 +139,12 @@ Markov.prototype = (function () {
    * @return void
    */
   nextState = function(tok) {
-    for (var i = 0; i < (chainOrder - 1); i++) {
+    var lastPos = chainOrder - 1,
+        i;
+    for (i = 0; i < lastPos; i++) {
       state[i] = state[i + 1];
     }
-    state[chainOrder - 1] = tok;
+    state[lastPos] = tok;
   };
 
   /**

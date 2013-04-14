@@ -5,8 +5,8 @@
  * @param  number chain_length チェインの長さ
  * @return void
  */
-var Markov = function (str, chain_length) {
-  this.init(str, chain_length);
+var Markov = function (str, order) {
+  this.init(str, order);
 };
 
 Markov.prototype = (function () {
@@ -14,7 +14,7 @@ Markov.prototype = (function () {
     state,
     input,
     markovChain,
-    chainLength,
+    chainOrder,
     init,
     makeChain,
     pushChain,
@@ -32,9 +32,9 @@ Markov.prototype = (function () {
    * @param  number len チェインの長さ
    * @return void
    */
-  init = function (str, len) {
-    len = Number(len);
-    chainLength = len > 0 ? len : 1;
+  init = function (str, order) {
+    order = Number(order);
+    chainOrder = order > 0 ? order : 1;
     input = str;
     makeChain(input);
   };
@@ -68,16 +68,16 @@ Markov.prototype = (function () {
   pushChain = function (c) {
     var chain = markovChain,
       i;
-    for (i = 0; i < (chainLength - 1); i += 1) {
+    for (i = 0; i < (chainOrder - 1); i += 1) {
       if (typeof chain[state[i]] === 'undefined') {
         chain[state[i]] = {};
       }
       chain = chain[state[i]];
     }
-    if (typeof chain[state[chainLength - 1]] === 'undefined') {
-      chain[state[chainLength - 1]] = [];
+    if (typeof chain[state[chainOrder - 1]] === 'undefined') {
+      chain[state[chainOrder - 1]] = [];
     }
-    chain[state[chainLength - 1]].push(c);
+    chain[state[chainOrder - 1]].push(c);
   };
 
   /**
@@ -109,7 +109,7 @@ Markov.prototype = (function () {
     var chain = markovChain,
       i,
       r;
-    for (i = 0; i < chainLength; i += 1) {
+    for (i = 0; i < chainOrder; i += 1) {
       chain = chain[state[i]];
     }
     r = Math.floor(Math.random() * chain.length);
@@ -124,7 +124,7 @@ Markov.prototype = (function () {
    */
   initState = function () {
     state = [];
-    for (var i = 0; i < chainLength; i += 1) {
+    for (var i = 0; i < chainOrder; i += 1) {
       state[i] = NONWORD;
     }
   };
@@ -136,10 +136,10 @@ Markov.prototype = (function () {
    * @return void
    */
   nextState = function(c) {
-    for (var i = 0; i < (chainLength - 1); i += 1) {
+    for (var i = 0; i < (chainOrder - 1); i += 1) {
       state[i] = state[i + 1];
     }
-    state[chainLength - 1] = c;
+    state[chainOrder - 1] = c;
   };
 
   /**

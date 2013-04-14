@@ -4,14 +4,19 @@
  *
  * @param  <String> str
  * @param  number order  
+ * @param  <Object> options
  * @return void
  */
-var Markov = function (str, order) {
-  this.init(str, order);
+var Markov = function (str, order, options) {
+  this.init(str, order, options);
 };
 
 Markov.prototype = (function () {
   var NONWORD = "NONWORD",
+      settings = {
+        delim : "",
+        outputLen : 100
+      },
       state,
       input,
       markovChain,
@@ -24,16 +29,21 @@ Markov.prototype = (function () {
       initState,
       nextState,
       getChain;
-
+      
   /**
    * Initialization of Markov Chain
    * Sets the order of chain states
    *
    * @param  <String> str
    * @param  number order 
+   * @param  <Object> options
    * @return void
    */
-  init = function (str, order) {
+  init = function (str, order, options) {
+    if (options) {
+      settings.delim = options.delim;
+      settings.outputLen = options.outputLen;
+    }
     order = Number(order);
     chainOrder = order > 0 ? order : 1;
     input = str;
@@ -49,7 +59,7 @@ Markov.prototype = (function () {
   makeChain = function () {
     initState();
     markovChain = {};
-    var strList = input.split(''),
+    var strList = input.split(settings.delim),
         i,
         c;
     for (i = 0; i < strList.length; i++) {
@@ -58,6 +68,7 @@ Markov.prototype = (function () {
       nextState(c);
     }
     pushChain(NONWORD);
+    console.log(markovChain);
   };
 
   /**
@@ -91,10 +102,10 @@ Markov.prototype = (function () {
    */
   each = function (lambda) {
     initState();
-    for (;;) {
+    for (var i = 0; i < settings.outputLen; i++) {
       var p = pick();
       if (p === NONWORD) {
-        break;
+        initState(); //reached end. Reinit.
       } else {
         lambda.apply(null, [p]);
       }
@@ -113,6 +124,7 @@ Markov.prototype = (function () {
         i,
         r;
     for (i = 0; i < chainOrder; i++) {
+      console.log(state[i]);
       chain = chain[state[i]];
     }
     r = Math.floor(Math.random() * chain.length);

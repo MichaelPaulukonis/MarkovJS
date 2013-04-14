@@ -19,6 +19,7 @@ Markov.prototype = (function () {
       },
       state,
       input,
+      tokens,
       markovChain,
       chainOrder,
       init,
@@ -57,11 +58,12 @@ Markov.prototype = (function () {
    * @return void
    */
   makeChain = function () {
-    initState();
-    markovChain = {};
     var strList = input.split(settings.delim),
         i,
         c;
+    tokens = strList;
+    initState();
+    markovChain = {};
     for (i = 0; i < strList.length; i++) {
       c = strList[i];
       pushChain(c);
@@ -100,7 +102,7 @@ Markov.prototype = (function () {
    * @return void
    */
   each = function (lambda) {
-    initState();
+    initState(); 
     for (var i = 0; i < settings.outputLen; i++) {
       var p = pick();
       if (p === NONWORD) {

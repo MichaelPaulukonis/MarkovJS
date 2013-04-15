@@ -153,17 +153,17 @@ Markov.prototype = (function () {
    */
   initRstate = function () {
     var chain = markovChain,
-        randTok,
         list,
-        i;
+        i, 
+        r;
     for(i = 0; i < chainOrder; i++) {
         list = [];
         for (var a in chain) { 
           list.push(a);
         }
-        randTok = list[Math.floor(Math.random() * list.length)];
-        state[i] = randTok;
-        chain = chain[randTok];
+        r = Math.floor(Math.random() * list.length);
+        state[i] = list[r];
+        chain = chain[list[r]];
      }
   };
 

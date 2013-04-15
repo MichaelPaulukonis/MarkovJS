@@ -28,6 +28,7 @@ Markov.prototype = (function () {
       each,
       pick,
       initState,
+      initRstate,
       nextState,
       getChain;
       
@@ -102,11 +103,11 @@ Markov.prototype = (function () {
    * @return void
    */
   each = function (lambda) {
-    initState(); 
+    initRstate();
     for (var i = 0; i < settings.outputLen; i++) {
       var p = pick();
       if (p === NONWORD) {
-        initState(); //reached end. Reinit.
+        initState();
       } else {
         lambda.apply(null, [p]);
       }
@@ -132,7 +133,7 @@ Markov.prototype = (function () {
   };
 
   /**
-   * State initialization
+   * Initital state initialization
    *
    * @param  void
    * @return void
@@ -142,6 +143,28 @@ Markov.prototype = (function () {
     for (var i = 0; i < chainOrder; i++) {
       state[i] = NONWORD;
     }
+  };
+   
+   /**
+   * Random state initialization
+   *
+   * @param  void
+   * @return void
+   */
+  initRstate = function () {
+    var chain = markovChain,
+        randTok,
+        list,
+        i;
+    for(i = 0; i < chainOrder; i++) {
+        list = [];
+        for (var a in chain) { 
+          list.push(a);
+        }
+        randTok = list[Math.floor(Math.random() * list.length)];
+        state[i] = randTok;
+        chain = chain[randTok];
+     }
   };
 
   /**
